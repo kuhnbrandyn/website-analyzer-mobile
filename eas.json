@@ -6,11 +6,11 @@
     "production": {
       "ios": {
         "node": "20.10.0",
-        "resourceClass": "m-medium"
+        "resourceClass": "medium"
       },
       "android": {
         "node": "20.10.0",
-        "resourceClass": "m-medium",
+        "resourceClass": "medium",
         "buildType": "app-bundle"
       }
     }
