@@ -2,8 +2,8 @@
   "cli": { "version": ">= 10.0.0" },
   "build": {
     "production": {
-      "ios": { "buildType": "release" },
-      "android": { "buildType": "release" }
+      "ios": { "buildType": "archive" },
+      "android": { "buildType": "app-bundle" }
     }
   },
   "submit": { "production": {} }
