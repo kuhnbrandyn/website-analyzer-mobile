@@ -2,7 +2,7 @@
   "cli": { "version": ">= 10.0.0" },
   "build": {
     "production": {
-      "ios": { "buildType": "archive" },
+      "ios": {},
       "android": { "buildType": "app-bundle" }
     }
   },
