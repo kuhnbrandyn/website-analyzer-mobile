@@ -16,14 +16,16 @@ export default {
     assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.trustify.app"
+      bundleIdentifier: "com.trustify.app",
+      buildNumber: "1.0.0"
     },
     android: {
+      package: "com.trustify.app",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#0B0C10"
       },
-      package: "com.trustify.app"
+      versionCode: 1
     },
     web: {
       favicon: "./assets/icon.png"
@@ -32,8 +34,14 @@ export default {
       EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
       EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
       eas: {
-        projectId: "a8a32180-2ef0-4395-b28d-ba4086ed8104"
+        projectId: "d7e33c31-bb2c-4f76-9320-c11d12e3775b" // ✅ your new Expo project ID
       }
+    },
+    runtimeVersion: {
+      policy: "appVersion"
+    },
+    updates: {
+      url: "https://u.expo.dev/d7e33c31-bb2c-4f76-9320-c11d12e3775b"
     }
   }
 };
