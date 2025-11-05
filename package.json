@@ -1,0 +1,27 @@
+{
+  "name": "trustify",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "expo": "~52.0.0",
+    "expo-status-bar": "~2.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.74.3",
+    "react-native-safe-area-context": "4.10.5",
+    "react-native-screens": "~4.1.0",
+    "@react-navigation/native": "^6.1.11",
+    "@react-navigation/native-stack": "^6.9.20",
+    "@supabase/supabase-js": "^2.44.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2"
+  },
+  "private": true
+}
