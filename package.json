@@ -1,12 +1,16 @@
 {
   "name": "trustify",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "expo lint"
   },
   "dependencies": {
     "expo": "~52.0.0",
@@ -18,7 +22,7 @@
     "react-native-screens": "~4.1.0",
     "@react-navigation/native": "^6.1.11",
     "@react-navigation/native-stack": "^6.9.20",
-    "@supabase/supabase-js": "^2.44.3"
+    "@supabase/supabase-js": "^2.79.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2"
