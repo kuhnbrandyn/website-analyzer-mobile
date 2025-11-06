@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -50,37 +51,51 @@ export default function AnalyzerScreen() {
     if (!url)
       return Alert.alert("Missing URL", "Please enter a website to check.");
 
+    if (!/^https?:\/\/\S+/i.test(url.trim())) {
+      return Alert.alert(
+        "Invalid URL",
+        "Please enter a full URL starting with http(s)://"
+      );
+    }
+
     if (remainingScans <= 0) {
-      // Instead of alert, send user to Paywall screen
       return navigation.replace("Paywall");
     }
 
     setLoading(true);
     try {
-      // Simulated scan logic (replace later with your API)
-      const mockResult = {
-        trustScore: Math.floor(Math.random() * 20) + 80,
-        flags: [
-          "Valid SSL certificate",
-          "No scam reports",
-          "Domain age: 3+ years",
-        ],
-      };
-      setResult(mockResult);
+      const response = await fetch(
+        "https://myresellermentor.com/api/supplier-analyzer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-trustify-app": "true", // optional: to identify requests from the app
+          },
+          body: JSON.stringify({ input: url }),
+        }
+      );
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        throw new Error(json?.error || "Error running analysis");
+      }
+
+      setResult(json.data);
 
       // Save scan in Supabase
       await supabase.from("scan_logs").insert([
         {
           user_id: user.id,
           website_url: url,
-          result: mockResult,
-          trust_score: mockResult.trustScore,
+          result: json.data,
+          trust_score: json.data.trust_score,
         },
       ]);
 
       // Increment scan usage count
       await supabase.rpc("increment_scan_count", { uid: user.id });
-
       await checkScanLimit(user.id);
     } catch (err) {
       console.error(err);
@@ -92,43 +107,75 @@ export default function AnalyzerScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>🔒 Trustify</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter supplier website"
-        placeholderTextColor="#aaa"
-        value={url}
-        onChangeText={setUrl}
-      />
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Text style={styles.title}>🔒 Trustify</Text>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleAnalyze}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? "Analyzing..." : "Run Check"}
-        </Text>
-      </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter supplier website"
+          placeholderTextColor="#aaa"
+          value={url}
+          onChangeText={setUrl}
+          autoCapitalize="none"
+        />
 
-      <Text style={styles.counter}>
-        {remainingScans > 0
-          ? `${remainingScans} scans left`
-          : "Upgrade to continue"}
-      </Text>
-
-      {result && (
-        <View style={styles.resultBox}>
-          <Text style={styles.resultTitle}>
-            Trust Score: {result.trustScore}%
+        <TouchableOpacity
+          style={[styles.button, loading && { opacity: 0.6 }]}
+          onPress={handleAnalyze}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Analyzing..." : "Run Check"}
           </Text>
-          {result.flags.map((flag, i) => (
-            <Text key={i} style={styles.resultText}>
-              • {flag}
+        </TouchableOpacity>
+
+        <Text style={styles.counter}>
+          {remainingScans > 0
+            ? `${remainingScans} scans left`
+            : "Upgrade to continue"}
+        </Text>
+
+        {result && (
+          <View style={styles.resultBox}>
+            <Text style={styles.resultTitle}>
+              Trust Score: {Math.round(result.trust_score)} / 100
             </Text>
-          ))}
-        </View>
-      )}
+            <Text style={styles.resultText}>
+              Risk Level: {result.risk_level}
+            </Text>
+
+            <Text style={styles.sectionTitle}>Summary</Text>
+            <Text style={styles.resultText}>{result.summary}</Text>
+
+            <Text style={styles.sectionTitle}>Positives</Text>
+            {result.positives?.length ? (
+              result.positives.map((p, i) => (
+                <Text key={i} style={styles.resultText}>
+                  ✅ {p}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.resultText}>None detected.</Text>
+            )}
+
+            <Text style={styles.sectionTitle}>Red Flags</Text>
+            {result.red_flags?.length ? (
+              result.red_flags.map((r, i) => (
+                <Text key={i} style={[styles.resultText, { color: "#ff7373" }]}>
+                  ⚠️ {r}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.resultText}>None detected.</Text>
+            )}
+
+            <Text style={styles.disclaimer}>
+              ⚠️ Always validate with a small test order. This AI report is
+              informational only and not legal advice.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -137,8 +184,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0B0C10",
+  },
+  scroll: {
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     padding: 20,
   },
   title: {
@@ -181,6 +230,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  resultText: { color: "#FFF" },
+  sectionTitle: {
+    color: "#00C2A8",
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  resultText: {
+    color: "#FFF",
+    marginBottom: 4,
+  },
+  disclaimer: {
+    color: "#888",
+    fontSize: 12,
+    marginTop: 15,
+  },
   counter: { color: "#00C2A8", marginTop: 10, fontSize: 14 },
 });
+
