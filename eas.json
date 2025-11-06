@@ -1,34 +1,18 @@
 {
   "cli": {
-    "version": ">= 3.13.0"
+    "version": ">= 11.0.0"
   },
   "build": {
     "production": {
+      "node": "20.11.1",
       "developmentClient": false,
       "distribution": "store",
       "android": {
-        "buildType": "app-bundle",
-        "resourceClass": "default"
+        "buildType": "app-bundle"
       },
       "ios": {
-        "simulator": false,
-        "resourceClass": "default"
-      }
-    },
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk",
-        "resourceClass": "default"
-      },
-      "ios": {
-        "simulator": true,
-        "resourceClass": "default"
+        "resourceClass": "m-medium"
       }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }
