@@ -1,16 +1,12 @@
 {
   "name": "trustify",
   "version": "1.0.0",
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "expo lint"
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
   },
   "dependencies": {
     "expo": "~52.0.0",
@@ -26,6 +22,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "private": true
 }
